@@ -1,0 +1,32 @@
+spring:
+  application.name: eBookRepository
+  profiles:
+    active: develop
+  datasource:
+    url: jdbc:postgresql://localhost:5432/e_book_repository
+    driver-class-name: org.postgresql.Driver
+    name: portier_launcher
+    username: postgres
+    password: rootroot
+  jpa:
+#    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate.ddl-auto: update
+  servlet.multipart:
+    max-file-size: 100MB
+    max-request-size: 100MB
+
+
+server:
+  port: 8080
+  servlet.context-path: /api
+
+logging.level.org.hibernate.SQL: DEBUG
+#hibernate.temp.use_jdbc_metadata_defaults: false
+spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults: false
+
+
+custom:
+  storage:
+    # with slash at the end
+    location: ./storage/

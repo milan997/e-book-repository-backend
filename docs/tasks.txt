@@ -1,0 +1,65 @@
+model
+	- classes: language, category (private String name; english, unique), categoryTranslation, ebook, author, tag
+	- controller crud, category for locale, 
+	
+integrate with elasticsearch 
+	- download elastic, run
+	- elastic component, crud
+	- integrate elastic component to services
+
+controller, dtos, service (no pdf)
+	- create book , no pdf 
+
+initiate elasticsearch indicies , tables
+
+add elasticsearch calls to services 
+
+learn vue 
+
+frontend 
+
+books and categories
+	- categories on the left, books on right
+
+crud
+
+pdf upload
+	- uploading file, storing to disk, indexing
+	- metadata support 
+	- download button on frontend
+
+search
+	- booleanquery, phreaze, fuzzy??
+
+add pageability
+	- backend
+	- frontend
+
+highlights 
+
+sort search results
+	- by year 
+
+add authentication, jwt
+	- add home page to website, library photo, 
+	- login, logout on every page but home
+	- model user, userType enum, jwt, hashing password
+	- permissions, owner permission
+
+add roles, subscriber, unauthorized ui 
+
+edit users, change password 
+
+edit categories
+
+registration support
+
+frontend ui localization, english, serbian cyrillic, serbian latin
+
+localize categories
+
+localize search
+	- cyrillic, latin
+
+
+
