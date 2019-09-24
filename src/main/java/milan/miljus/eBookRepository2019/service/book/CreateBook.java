@@ -1,15 +1,21 @@
 package milan.miljus.eBookRepository2019.service.book;
 
 import lombok.RequiredArgsConstructor;
-import milan.miljus.eBookRepository2019.component.pdf.PdfTextExtractor;
+import milan.miljus.eBookRepository2019.component.pdf.PdfDissection;
+import milan.miljus.eBookRepository2019.component.search.ElasticIndexing;
+import milan.miljus.eBookRepository2019.component.search.value.BookElastic;
+import milan.miljus.eBookRepository2019.model.Admin;
+import milan.miljus.eBookRepository2019.model.Book;
 import milan.miljus.eBookRepository2019.model.Category;
 import milan.miljus.eBookRepository2019.repository.BookRepository;
 import milan.miljus.eBookRepository2019.service.book.value.CreateBookInfo;
 import milan.miljus.eBookRepository2019.service.category.GetCategory;
+import milan.miljus.eBookRepository2019.service.user.GetAdmin;
+import milan.miljus.eBookRepository2019.util.Constants;
+import milan.miljus.eBookRepository2019.util.languages.LanguageUtil;
+import milan.miljus.eBookRepository2019.util.languages.exception.IsoCodeDoesNotExistException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 /**
  * Created by milan.miljus on 2019-07-20 16:51.
@@ -20,29 +26,46 @@ public class CreateBook {
 
     private final GetCategory getCategory;
     private final BookRepository bookRepository;
-    private final PdfTextExtractor pdfTextExtractor;
+    private final PdfDissection pdfDissection;
+    private final ElasticIndexing elasticIndexing;
+    private final GetAdmin getAdmin;
 
-    @Transactional(rollbackFor = Throwable.class)
-    public UUID execute(final CreateBookInfo info) {
+    @Transactional(rollbackFor = Throwable.class, readOnly = false)
+    public long execute(final CreateBookInfo info) {
+        check(info);
+        
         final Category category = getCategory.execute(info.getCategoryId());
-        final String text = pdfTextExtractor.extractText(info.getFileKey());
+        final Admin owner = getAdmin.byId(info.getOwnerId());
 
-//        final Book book = bookRepository.save(Book.builder()
-////                .language(info.getLanguageIsoCode())
-////                .year(info.getYear())
-////                .mimeType(info.getMimeType())
-////                .author(info.getAuthor())
-////                .name(info.getName())
-////                .category(category)
-////                .keywords(info.getKeywords())
-////                .
-////                .build());
-////
-////        // save to disk
-////
-////        // index
-////        return book.getId();
-        return null;
+        final String text = pdfDissection.extractText(info.getFileKey());
+        final int pageCount = pdfDissection.extractMeta(info.getFileKey()).getPageCount();
+
+        final Book book = bookRepository.save(Book.builder()
+                .languageCode(info.getLanguageIsoCode())
+                .year(info.getYear())
+                .author(info.getAuthor())
+                .title(info.getTitle())
+                .category(category)
+                .keywords(info.getKeywords())
+                .image(Constants.DEFAULT_BOOK_IMAGE)
+                .fileKey(info.getFileKey())
+                .pageCount(pageCount)
+                .owner(owner)
+                .build());
+
+        // save to disk
+        bookRepository.save(book);
+
+        // index
+        elasticIndexing.index(new BookElastic(book, text));
+
+        return book.getId();
+    }
+
+    private void check(final CreateBookInfo info) {
+        if (!LanguageUtil.isoCodeExists(info.getLanguageIsoCode())) {
+            throw new IsoCodeDoesNotExistException();
+        }
     }
 
 }

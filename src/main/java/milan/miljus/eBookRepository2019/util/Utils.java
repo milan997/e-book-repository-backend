@@ -11,11 +11,17 @@ import java.util.Date;
 @UtilityClass
 public class Utils {
 
-    public String getTimestamp() {
+    public String getTimestampAsString() {
         final Date date= new Date();
         final long time = date.getTime();
         Timestamp ts = new Timestamp(time);
         return ts.toString();
+    }
+
+    public Timestamp getTimestamp() {
+        final Date date= new Date();
+        final long time = date.getTime();
+        return new Timestamp(time);
     }
 
 }

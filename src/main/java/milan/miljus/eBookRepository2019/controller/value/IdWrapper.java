@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 /**
  * Created by milan.miljus on 2019-07-20 05:08.
@@ -15,9 +14,9 @@ import java.util.UUID;
 public class IdWrapper {
 
     @NotNull
-    private UUID id;
+    private long id;
 
-    public static IdWrapper of(UUID id) {
+    public static IdWrapper of(long id) {
         return new IdWrapper(id);
     }
 

@@ -5,16 +5,18 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/e_book_repository
     driver-class-name: org.postgresql.Driver
-    name: portier_launcher
+    name: e_book_repository
     username: postgres
     password: rootroot
+    initialization-mode: always
   jpa:
-#    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate.ddl-auto: create
     database-platform: org.hibernate.dialect.PostgreSQL9Dialect
-    hibernate.ddl-auto: update
+    properties.hibernate.jdbc.lob.non_contextual_creation: true
   servlet.multipart:
     max-file-size: 100MB
     max-request-size: 100MB
+
 
 
 server:
@@ -23,10 +25,14 @@ server:
 
 logging.level.org.hibernate.SQL: DEBUG
 #hibernate.temp.use_jdbc_metadata_defaults: false
-spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults: false
+#spring.jpa.properties.hibernate.temp.use_jdbc_metadata_defaults: false
 
 
 custom:
+  elastic:
+    hostname: localhost
+    port: 9200
+    protocol: http
   storage:
     # with slash at the end
     location: ./storage/

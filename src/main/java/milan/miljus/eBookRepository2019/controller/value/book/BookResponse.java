@@ -1,41 +1,45 @@
 package milan.miljus.eBookRepository2019.controller.value.book;
 
-import lombok.Builder;
+import lombok.Getter;
+import milan.miljus.eBookRepository2019.model.Book;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-import java.util.UUID;
 
 /**
  * Created by milan.miljus on 2019-07-08 01:19.
  */
-@Builder
+@Getter
 public class BookResponse {
 
     @NotBlank
     @Size(min = 3, max = 80)
-    private String name;
-
-    @NotBlank
-    private String fileName;
+    private String title;
 
     @Size(min = 3, max = 120)
     private String author;
 
     @Size(min = 3, max = 120)
-    private String keywords;
+    private String[] keywords;
 
-    @Size(min = 3, max = 100)
-    @Pattern(regexp = "[a-z]+/[a-z]+")
-    private String mimeType;
+    @Positive
+    private int year;
 
-    private Integer year;
-
-    private String language;
+    @NotBlank
+    private String languageCode;
 
     @NotNull
-    private UUID categoryId;
+    private long categoryId;
+
+    public BookResponse(final Book book) {
+        this.title = book.getTitle();
+        this.author = book.getAuthor();
+        this.keywords = book.getKeywords();
+        this.year = book.getYear();
+        this.languageCode = book.getLanguageCode();
+        this.categoryId = book.getCategory().getId();
+    }
 
 }

@@ -19,6 +19,8 @@ public class FilesService {
 
     private final IStorage storage;
 
+    // TODO: milan.miljus 9/6/19 09:33 this is a component, make a service for BookPdfService or something
+
     public String put(final MultipartFile multipartFile) {
         final String key = generateFileKey(multipartFile.getOriginalFilename());
         storage.put(key, multipartFile);
@@ -34,6 +36,6 @@ public class FilesService {
     }
 
     private String generateFileKey(String originalFilename) {
-        return Utils.getTimestamp() + "~" + originalFilename;
+        return Utils.getTimestampAsString() + "~" + originalFilename;
     }
 }

@@ -1,14 +1,11 @@
 package milan.miljus.eBookRepository2019.controller.value.book;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.UUID;
+import javax.validation.constraints.*;
 
 import static milan.miljus.eBookRepository2019.util.ValidationConstants.*;
 
@@ -16,28 +13,27 @@ import static milan.miljus.eBookRepository2019.util.ValidationConstants.*;
  * Created by milan.miljus on 2019-07-08 01:16.
  */
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class CreateBookRequest {
 
     @NotBlank
-    @Size(min = BOOK_NAME_MIN, max = BOOK_NAME_MAX)
-    private String name;
+    @Size(min = BOOK_TITLE_MIN, max = BOOK_TITLE_MAX)
+    private String title;
 
     @Size(min = AUTHOR_NAME_MIN, max = AUTHOR_NAME_MAX)
     private String author;
 
-    private List<String> keywords;
-
-    @Pattern(regexp = MIME_TYPE_REGEX)
-    private String mimeType;
+    private String[] keywords;
 
     private Integer year;
 
     @Pattern(regexp = LANGUAGE_ISO_CODE_REGEX)
     private String languageCode;
 
-    @NotNull
-    private UUID categoryId;
+    @Positive
+    private long categoryId;
 
     @NotNull
     private String fileKey;

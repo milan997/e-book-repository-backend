@@ -1,10 +1,10 @@
 package milan.miljus.eBookRepository2019.repository;
 
 import milan.miljus.eBookRepository2019.model.Book;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by milan.miljus on 2019-07-08 00:17.
@@ -12,6 +12,7 @@ import java.util.UUID;
 @Repository
 public interface BookRepository extends CustomRepository<Book> {
 
-    List<Book> getAllByCategoryId(UUID categoryId);
+    @Query(nativeQuery = true, value = "SELECT * FROM Book WHERE category_id = :categoryId")
+    List<Book> findByCategoryId(final long categoryId);
 
 }

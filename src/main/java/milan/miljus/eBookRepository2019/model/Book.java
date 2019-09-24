@@ -1,16 +1,20 @@
 package milan.miljus.eBookRepository2019.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import milan.miljus.eBookRepository2019.util.Utils;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
-import javax.validation.constraints.*;
-import java.util.List;
-import java.util.UUID;
+import javax.persistence.PrePersist;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
+import java.sql.Timestamp;
 
 import static milan.miljus.eBookRepository2019.util.ValidationConstants.*;
 
@@ -24,44 +28,60 @@ import static milan.miljus.eBookRepository2019.util.ValidationConstants.*;
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Where(clause = "deleted = false")
 public class Book extends BaseEntity {
 
     @NotBlank
-    @Size(min = BOOK_NAME_MIN, max = BOOK_NAME_MAX)
-    private String name;
+    @Size(min = BOOK_TITLE_MIN, max = BOOK_TITLE_MAX)
+    @Setter
+    private String title;
 
+    @NotNull
+    private Timestamp timestamp;
+
+    @Setter
     @Size(min = AUTHOR_NAME_MIN, max = AUTHOR_NAME_MAX)
     private String author;
 
+    @Setter
     @Type(type = "string-array")
     @Column(columnDefinition = "text[]")
-    private List<String> keywords;
+    private String[] keywords;
 
-    @Pattern(regexp = MIME_TYPE_REGEX)
-    private String mimeType;
+    @Positive
+    private int pageCount;
 
+    @Setter
     @Positive
     private Integer year;
 
-    @Size(min = LANGUAGE_NAME_MIN, max = LANGUAGE_NAME_MAX)
-    private String language;
+    @Setter
+    @Size(min = LANGUAGE_CODE_MIN, max = LANGUAGE_CODE_MAX)
+    private String languageCode;
 
     private String image;
 
+    @Setter
     @NotNull
     @ManyToOne
     private Category category;
 
-    @Builder
-    public Book(@NotNull UUID id, @NotNull @NotBlank @Size(min = BOOK_NAME_MIN, max = BOOK_NAME_MAX) String name, @Size(min = 3, max = 120) String author, List<String> keywords, @Size(min = 3, max = 100) @Pattern(regexp = "[a-z]+/[a-z]+") String mimeType, Integer year, String language, String image, @NotNull Category category) {
-        this.id = id;
-        this.name = name;
-        this.author = author;
-        this.keywords = keywords;
-        this.mimeType = mimeType;
-        this.year = year;
-        this.language = language;
-        this.image = image;
-        this.category = category;
+    @NotNull
+    @NotBlank
+    private String fileKey;
+
+    @ManyToOne
+    private Admin owner;
+
+    public void delete() {
+        super.delete();
     }
+
+    @PrePersist
+    private void setTimestamp() {
+        this.timestamp = Utils.getTimestamp();
+    }
+
 }

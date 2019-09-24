@@ -1,7 +1,16 @@
 package milan.miljus.eBookRepository2019.component.search.value;
 
+import lombok.Getter;
+
+import javax.validation.constraints.NotBlank;
+
 /**
- * Created by milan.miljus on 2019-07-06 23:36.
+ * Created by milan.miljus on 9/19/19 19:21.
  */
-public class BaseIndexingObject {
+@Getter
+public abstract class BaseIndexingObject {
+
+    @NotBlank
+    protected String id;
+
 }

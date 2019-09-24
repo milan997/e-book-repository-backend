@@ -7,8 +7,6 @@ import milan.miljus.eBookRepository2019.service.book.exception.BookNotFoundExcep
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
-
 /**
  * Created by milan.miljus on 2019-07-20 14:52.
  */
@@ -19,7 +17,7 @@ public class GetBook {
     private final BookRepository bookRepository;
 
     @Transactional(rollbackFor = Throwable.class, readOnly = true)
-    public Book execute(UUID bookId) {
+    public Book execute(long bookId) {
         return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 

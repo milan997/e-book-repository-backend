@@ -21,7 +21,7 @@ public class AspectLogger {
     private final String NOT_LOGGING_MESSAGE = "not logging args for this class";
 
     @Pointcut( "    execution(* milan.miljus.eBookRepository2019.service..*.*(..))"
-//            +  " || execution(* milan.miljus.eBookRepository2019.component..*.*(..))"
+            +  " || execution(* milan.miljus.eBookRepository2019.component..*.*(..))"
             +  " || execution(* milan.miljus.eBookRepository2019.controller.*.*(..))"
     )
     private void methodCall() {}
@@ -38,7 +38,7 @@ public class AspectLogger {
 
     private void logMethodCall(JoinPoint jp, boolean logArgs) {
         final String[] argNames = ((CodeSignature) jp.getSignature()).getParameterNames();
-        final String[] argValues = Arrays.stream(jp.getArgs()).map((Object o) -> String.valueOf(o)).toArray(String[]::new);
+        final String[] argValues = Arrays.stream(jp.getArgs()).map(String::valueOf).toArray(String[]::new);
 
         String args = "";
         if (logArgs) {

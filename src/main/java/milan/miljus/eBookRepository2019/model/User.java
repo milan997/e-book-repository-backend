@@ -1,52 +1,52 @@
 package milan.miljus.eBookRepository2019.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import milan.miljus.eBookRepository2019.model.enumeration.UserType;
+import lombok.Setter;
+import milan.miljus.eBookRepository2019.model.enumeration.Role;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 /**
  * Created by milan.miljus on 2019-07-08 00:31.
  */
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role")
 @Table(name = "`user`")
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class User extends BaseEntity {
+public abstract class User extends BaseEntity {
 
+    @NotNull
     @NotBlank
-    private String firstName;
+    @Setter
+    protected String firstName;
 
+    @NotNull
     @NotBlank
-    private String lastName;
+    @Setter
+    protected String lastName;
 
     @NotBlank
     @NaturalId
-    private String username;
-
-    // TODO: milan.miljus 2019-07-20 04:42 extract password into new UserAuthorization or something entity
-    //
-//    @NotBlank
-//    @NotNull
-//    private String password;
+    protected String username;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+    @NotBlank
+    @Setter
+    protected String password;
 
     @NotNull
-    private boolean allCategories;
+    protected boolean fullAccess;
 
-    @ManyToMany
-    private List<Category> categories;
+    public abstract Role getRole();
+
+    public abstract boolean canDownloadBook(final Book book);
+
+    public boolean isSub() {
+        return getRole() == Role.SUB;
+    }
 
 }

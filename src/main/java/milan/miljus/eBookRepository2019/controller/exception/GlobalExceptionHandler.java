@@ -1,7 +1,11 @@
 package milan.miljus.eBookRepository2019.controller.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import milan.miljus.eBookRepository2019.service.auth.exception.AccessDeniedCustomException;
+import milan.miljus.eBookRepository2019.service.book.exception.BookNotFoundException;
 import milan.miljus.eBookRepository2019.service.files.exception.FileNotFoundException;
+import milan.miljus.eBookRepository2019.service.user.exception.EmailTakenException;
+import milan.miljus.eBookRepository2019.service.user.exception.UserNotFoundException;
 import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.converter.HttpMessageNotWritableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -26,7 +31,6 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -44,13 +48,25 @@ public final class GlobalExceptionHandler extends ResponseEntityExceptionHandler
 //        return buildResponseEntity(new ExceptionResponse(ex.getResourceBundleKey(), locale, NOT_FOUND));
 //    }
 
-    @ExceptionHandler(FileNotFoundException.class)
+    @ExceptionHandler({
+            FileNotFoundException.class,
+            UserNotFoundException.class,
+            BookNotFoundException.class,
+    })
     public ResponseEntity handleFileNotFoundException(CustomException ex, Locale locale){
         return buildResponseEntity(new ExceptionResponse(ex.getResourceBundleKey(), locale, NOT_FOUND));
     }
 
+    @ExceptionHandler({
+            EmailTakenException.class,
+    })
     public ResponseEntity handleConflict(CustomException ex, Locale locale){
         return buildResponseEntity(new ExceptionResponse(ex.getResourceBundleKey(), locale, ex.getMessage(), CONFLICT));
+    }
+
+    @ExceptionHandler({AccessDeniedCustomException.class, AccessDeniedException.class})
+    public ResponseEntity handleAccessDenied(Exception ex, Locale locale) {
+        return buildResponseEntity(new ExceptionResponse("access.denied", locale, ex.getLocalizedMessage(), FORBIDDEN));
     }
 
     @ExceptionHandler(CustomException.class)
@@ -59,15 +75,10 @@ public final class GlobalExceptionHandler extends ResponseEntityExceptionHandler
         return buildResponseEntity(new ExceptionResponse(ex.getResourceBundleKey(), locale, ex.getLocalizedMessage(), BAD_REQUEST));
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity handleException(Exception ex, Locale locale) {
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity handleThrowable(Throwable ex, Locale locale) {
         ex.printStackTrace();
         return buildResponseEntity(new ExceptionResponse("unexpected.exception", locale, ex.getLocalizedMessage(), INTERNAL_SERVER_ERROR));
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity handleAccessDenied(Exception ex, Locale locale) {
-        return buildResponseEntity(new ExceptionResponse("access.denied", locale, ex.getLocalizedMessage(), FORBIDDEN));
     }
 
     @Override
